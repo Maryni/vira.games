@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Global.Boot
 {
@@ -24,11 +26,13 @@ namespace Global.Boot
             List<BaseManager> baseManagers = new List<BaseManager>();
             GameObject managerGameObject = new GameObject("Managers");
             DontDestroyOnLoad(managerGameObject);
+            
             for (int i = 0; i < bootSettings.Managers.Count; i++)
             {
                 baseManagers.Add(Instantiate(bootSettings.Managers[i], managerGameObject.transform));
             }
-
+            
+            //RegisterManagers(locator);
             Services.InitAppWith(baseManagers);
         }
 
@@ -39,5 +43,13 @@ namespace Global.Boot
                 Tools.SceneLoader.LoadScene(bootSettings.NextSceneIndex, bootSettings.BootTime);
             }
         }
+
+        // private void RegisterManagers(ManagerLocator locator)
+        // {
+        //     foreach (BaseManager manager in bootSettings.Managers)
+        //     {
+        //         locator.Register(manager);
+        //     }
+        // }
     }
 }

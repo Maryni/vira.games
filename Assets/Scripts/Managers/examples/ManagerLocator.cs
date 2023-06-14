@@ -3,8 +3,9 @@ using UnityEngine;
 
 namespace Global
 {
-    public class ManagerLocatorExample : MonoBehaviour
+    public class ManagerLocator : MonoBehaviour
     {
+        //[SerializeField] private 
         private IManagerLocator<BaseManager> locator;
 
         private void Awake()
@@ -21,6 +22,10 @@ namespace Global
         {
             return locator.Get<T>();
         }
-        
+
+        public void Register<T>(T manager) where T : BaseManager
+        {
+            locator.Register(manager);
+        }
     }
 }

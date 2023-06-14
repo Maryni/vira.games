@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-namespace tools
+namespace tools.Old
 {
     public class ObjectPool<T> : MonoBehaviour 
     {
@@ -11,16 +11,13 @@ namespace tools
         [SerializeField] private List<GameObject> spawnedObjects;
         [SerializeField] private Transform parentTransform;
 
-        private void Start()
-        {
-            Init();
-        }
-
-        private void Init()
+        public void Init()
         {
             for (int i = 0; i < countSpawnedObjects; i++)
             {
-                Instantiate(exampleObject, parentTransform);
+                var newObject = Instantiate(exampleObject, parentTransform);
+                newObject.SetActive(false);
+                spawnedObjects.Add(newObject);
             }
         }
         
