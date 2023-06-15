@@ -27,7 +27,7 @@ public class FormationRenderer : MonoBehaviour {
     //     }
     // }
 
-    public IEnumerable<Vector3> GetPoints()
+    public List<Vector3> GetPoints()
     {
         return Formation.EvaluatePoints();
     }

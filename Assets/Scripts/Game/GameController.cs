@@ -5,6 +5,7 @@ using System.Linq;
 using Global.Controllers.Crowd;
 using Managers;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Global.Controllers
 {
@@ -12,9 +13,10 @@ namespace Global.Controllers
     {
         [SerializeField] private GameObject playerMovementZone;
         [SerializeField] private float modSpeed;
-        [SerializeField] private List<PointBase> positionList = new List<PointBase>();
+        [SerializeField] private List<PointBase> positionList;
 
         private FormationRenderer formationRenderer;
+        private CrowdCalculator crowdCalculator;
         private BoxFormation boxFormation;
         private GameObject playerMovementZoneGameObject;
         private Rigidbody playerMovementZoneRigidbody;
@@ -42,8 +44,10 @@ namespace Global.Controllers
         }
 
         private void SpawnPlayer()
-        { 
-            Services.GetManager<EntityManager>().SpawnPlayer(GetAvailablePosition(), playerMovementZone.transform);
+        {
+            Vector3 pos = GetAvailablePosition();
+            Debug.Log($"SpawnPlayer pos = {pos}");
+            Services.GetManager<EntityManager>().SpawnPlayer(pos, playerMovementZone.transform);
         }
 
         private void MoveMoveZone()
@@ -53,10 +57,12 @@ namespace Global.Controllers
 
         private void SetVariables()
         {
+            positionList = new List<PointBase>();
             playerMovementZoneGameObject = playerMovementZone.transform.GetChild(0).gameObject;
             playerMovementZoneRigidbody = playerMovementZoneGameObject.GetComponent<Rigidbody>();
-            formationRenderer = playerMovementZoneRigidbody.GetComponent<FormationRenderer>();
-            boxFormation = playerMovementZoneRigidbody.GetComponent<BoxFormation>();
+            crowdCalculator = playerMovementZoneRigidbody.GetComponent<CrowdCalculator>();
+            //formationRenderer = playerMovementZoneRigidbody.GetComponent<FormationRenderer>();
+            //boxFormation = playerMovementZoneRigidbody.GetComponent<BoxFormation>();
         }
 
         private void SetPlayersCount()
@@ -66,43 +72,57 @@ namespace Global.Controllers
         
         private void CalculatePosition()
         {
+            SetPlayersCount();
             SetNewVariables();
-            
-            var list = formationRenderer.GetPoints();
+
+            List<Vector3> list = crowdCalculator.CalculateSpawnPositions();
+
             foreach (var pos in list)
             {
-                positionList.Add(new PointBase(pos, false));
+                var temp = new PointBase(pos, false);
+                if (!IsHavePosition(pos, positionList))
+                {
+                    positionList.Add(temp);
+                }
+                
+                Debug.Log($"reg pos = {pos}");
             }
-            
         }
 
         private void SetNewVariables()
         {
-            if (countPlayers == 0 || countPlayers == 1)
-            {
-                boxFormation.SetWidthAndDepth(1, 1);
-            }
-            if (countPlayers % 2 == 0)
-            {
-                boxFormation.SetWidthAndDepth(countPlayers/2, countPlayers /2);  
-            }
-            else
-            {
-                boxFormation.SetWidthAndDepth((countPlayers/2) + 1, countPlayers /2);  
-            }
+            crowdCalculator.CrowdSize = countPlayers + 1;
         }
 
         private Vector3 GetAvailablePosition()
         {
-            var position = positionList.FirstOrDefault(x => !x.Captured);
-            if (position != null)
+            CalculatePosition();
+            PointBase currentPos = positionList.FirstOrDefault(x => x.Captured == false);
+            currentPos.Captured = true;
+            return currentPos.Position;
+        }
+
+        private bool IsHavePosition(Vector3 position, List<PointBase> list)
+        {
+            PointBase tempBase = new PointBase(position, true);
+            
+            for (int i = 0; i < list.Count; i++)
             {
-                return position.Position;
+                if (list[i].Position == tempBase.Position && list[i].Captured == tempBase.Captured)
+                {
+                    return true;
+                }
             }
-            else
+            tempBase = new PointBase(position, false);
+            for (int i = 0; i < list.Count; i++)
             {
-                throw new Exception("There is no position available");
+                if (list[i].Position == tempBase.Position && list[i].Captured == tempBase.Captured)
+                {
+                    return true;
+                }
             }
+
+            return false;
         }
     }
 }

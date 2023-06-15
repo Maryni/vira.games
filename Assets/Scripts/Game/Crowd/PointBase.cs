@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 
 namespace Global.Controllers.Crowd
 {
-    public class PointBase : MonoBehaviour
+    [Serializable]
+    public struct PointBase 
     {
         public Vector3 Position;
         public bool Captured;

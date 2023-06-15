@@ -43,15 +43,11 @@ namespace Managers
         public void SpawnPlayer(Vector3 position, Transform transformValue = null)
         {
             var spawnedObject = pool.Get();
-            if (position != Vector3.zero)
-            {
-                spawnedObject.transform.position = position;
-                spawnedObject.transform.SetParent(transformValue.GetChild(0));
-            }
-            spawnedObject.gameObject.SetActive(true);
 
+            Debug.Log($"posS = {position}");
+            spawnedObject.transform.position = position;
+            spawnedObject.transform.SetParent(transformValue.GetChild(0));
+            spawnedObject.gameObject.SetActive(true);
         }
-        
-        
     }
 }

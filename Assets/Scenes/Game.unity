@@ -352,6 +352,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerMovementZone: {fileID: 1995776918}
   modSpeed: 50
+  positionList: []
 --- !u!1 &1004088243
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,7 +558,6 @@ GameObject:
   - component: {fileID: 1502705370}
   - component: {fileID: 1502705373}
   - component: {fileID: 1502705374}
-  - component: {fileID: 1502705375}
   m_Layer: 0
   m_Name: PlayerTransform
   m_TagString: Untagged
@@ -668,29 +668,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1502705368}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 283402299b9f65b4fbb17ed7c6078a25, type: 3}
+  m_Script: {fileID: 11500000, guid: 53086bf1a4cb409babfddce2174e11a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _noise: 0.1
-  Spread: 1
-  _unitWidth: 5
-  _unitDepth: 5
-  _hollow: 0
-  _nthOffset: 0
---- !u!114 &1502705375
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1502705368}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd55aeca70afc0241893622fa3318a82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _unitGizmoSize: {x: 1, y: 1, z: 1}
-  _gizmoColor: {r: 0, g: 0, b: 0, a: 0}
+  CrowdSize: 2
+  Spacing: 1
+  basePosition: {x: 0, y: 0, z: 0}
 --- !u!1 &1695885679
 GameObject:
   m_ObjectHideFlags: 0
