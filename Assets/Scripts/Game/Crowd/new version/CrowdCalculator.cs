@@ -14,11 +14,10 @@ namespace Global.Controllers.Crowd
         
         public List<Vector3> CalculateSpawnPositions()
         {
-
             Vector3 playerPosition;
             if (transform.childCount == 0)
             {
-                playerPosition = Vector3.zero;
+                playerPosition = new Vector3(0f,1f,0f);
             }
             else
             {

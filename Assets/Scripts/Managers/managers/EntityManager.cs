@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -10,6 +12,7 @@ namespace Managers
         [SerializeField] private Transform parentTransform;
         
         private ObjectPool<PlayerComponents> pool;
+        private List<PlayerComponents> spawnedObjects = new List<PlayerComponents>();
         private int value = 5;
 
         public override Type ManagerType => typeof(EntityManager);
@@ -37,7 +40,7 @@ namespace Managers
                 spawnedObject.transform.SetParent(transformValue.GetChild(0));
             }
             spawnedObject.gameObject.SetActive(true);
-
+            spawnedObjects.Add(spawnedObject);
         }
         
         public void SpawnPlayer(Vector3 position, Transform transformValue = null)
@@ -45,9 +48,15 @@ namespace Managers
             var spawnedObject = pool.Get();
 
             Debug.Log($"posS = {position}");
-            spawnedObject.transform.position = position;
             spawnedObject.transform.SetParent(transformValue.GetChild(0));
+            spawnedObject.transform.position = position;
             spawnedObject.gameObject.SetActive(true);
+            spawnedObjects.Add(spawnedObject);
+        }
+
+        public List<PlayerComponents> GetAll()
+        {
+            return spawnedObjects;
         }
     }
 }

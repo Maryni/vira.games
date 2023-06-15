@@ -13,7 +13,7 @@ namespace Global.Controllers
     {
         [SerializeField] private GameObject playerMovementZone;
         [SerializeField] private float modSpeed;
-        [SerializeField] private List<PointBase> positionList;
+        [SerializeField] private List<Vector3> positionList;
 
         private FormationRenderer formationRenderer;
         private CrowdCalculator crowdCalculator;
@@ -45,9 +45,8 @@ namespace Global.Controllers
 
         private void SpawnPlayer()
         {
-            Vector3 pos = GetAvailablePosition();
-            Debug.Log($"SpawnPlayer pos = {pos}");
-            Services.GetManager<EntityManager>().SpawnPlayer(pos, playerMovementZone.transform);
+            Services.GetManager<EntityManager>().SpawnPlayer(playerMovementZone.transform);
+            SetAllPosToAllPlayers();
         }
 
         private void MoveMoveZone()
@@ -57,7 +56,7 @@ namespace Global.Controllers
 
         private void SetVariables()
         {
-            positionList = new List<PointBase>();
+            positionList = new List<Vector3>();
             playerMovementZoneGameObject = playerMovementZone.transform.GetChild(0).gameObject;
             playerMovementZoneRigidbody = playerMovementZoneGameObject.GetComponent<Rigidbody>();
             crowdCalculator = playerMovementZoneRigidbody.GetComponent<CrowdCalculator>();
@@ -76,53 +75,52 @@ namespace Global.Controllers
             SetNewVariables();
 
             List<Vector3> list = crowdCalculator.CalculateSpawnPositions();
+            Debug.Log($"list.count = {list.Count}");
+            positionList.Clear();
 
             foreach (var pos in list)
             {
-                var temp = new PointBase(pos, false);
-                if (!IsHavePosition(pos, positionList))
-                {
-                    positionList.Add(temp);
-                }
-                
-                Debug.Log($"reg pos = {pos}");
+                positionList.Add(pos);
             }
         }
 
         private void SetNewVariables()
         {
-            crowdCalculator.CrowdSize = countPlayers + 1;
+            crowdCalculator.CrowdSize = countPlayers;
         }
 
-        private Vector3 GetAvailablePosition()
+        private void SetAllPosToAllPlayers()
         {
             CalculatePosition();
-            PointBase currentPos = positionList.FirstOrDefault(x => x.Captured == false);
-            currentPos.Captured = true;
-            return currentPos.Position;
-        }
-
-        private bool IsHavePosition(Vector3 position, List<PointBase> list)
-        {
-            PointBase tempBase = new PointBase(position, true);
             
+            var list = Services.GetManager<EntityManager>().GetAll();
             for (int i = 0; i < list.Count; i++)
             {
-                if (list[i].Position == tempBase.Position && list[i].Captured == tempBase.Captured)
-                {
-                    return true;
-                }
+                list[i].transform.position = positionList[i];
             }
-            tempBase = new PointBase(position, false);
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list[i].Position == tempBase.Position && list[i].Captured == tempBase.Captured)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
+
+        // private bool IsHavePosition(Vector3 position)
+        // {
+        //     PointBase tempBase = new PointBase(position, true);
+        //     
+        //     for (int i = 0; i < positionList.Count; i++)
+        //     {
+        //         if (positionList[i].Position == tempBase.Position && positionList[i].Captured == tempBase.Captured)
+        //         {
+        //             return true;
+        //         }
+        //     }
+        //     tempBase = new PointBase(position, false);
+        //     for (int i = 0; i < positionList.Count; i++)
+        //     {
+        //         if (positionList[i].Position == tempBase.Position && positionList[i].Captured == tempBase.Captured)
+        //         {
+        //             return true;
+        //         }
+        //     }
+        //
+        //     return false;
+        // }
     }
 }
